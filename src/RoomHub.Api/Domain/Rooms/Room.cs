@@ -4,6 +4,13 @@ namespace RoomHub.Api.Domain.Rooms;
 
 public sealed class Room
 {
+    // R10: rooms with more seats than this get the shorter booking limit.
+    public const int LargeRoomCapacity = 10;
+    public static readonly TimeSpan LargeRoomMaxBookingDuration = TimeSpan.FromHours(2);
+
+    // R6: the limit for rooms with capacity 10 or less.
+    public static readonly TimeSpan DefaultMaxBookingDuration = TimeSpan.FromHours(4);
+
     // For EF Core. Outside code uses Room.Create.
     private Room()
     {
@@ -34,4 +41,9 @@ public sealed class Room
 
     // R4 (upper bound): the room decides whether it has enough seats.
     public bool CanFit(int attendees) => attendees <= Capacity;
+
+    // R6 + R10: capacity > 10 means at most 2 hours, otherwise at most 4 hours.
+    // The limit itself is allowed ("exactly 2/4 hours").
+    public TimeSpan MaxBookingDuration =>
+        Capacity > LargeRoomCapacity ? LargeRoomMaxBookingDuration : DefaultMaxBookingDuration;
 }

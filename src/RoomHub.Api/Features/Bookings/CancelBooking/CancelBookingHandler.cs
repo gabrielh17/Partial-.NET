@@ -6,7 +6,10 @@ namespace RoomHub.Api.Features.Bookings.CancelBooking;
 
 public sealed record CancelBookingCommand(Guid BookingId) : ICommand<Unit>;
 
-public sealed class CancelBookingHandler(IBookingRepository bookings, IUnitOfWork unitOfWork)
+public sealed class CancelBookingHandler(
+    IBookingRepository bookings,
+    IUnitOfWork unitOfWork,
+    TimeProvider time)
     : ICommandHandler<CancelBookingCommand, Unit>
 {
     public async Task<Result<Unit>> Handle(CancelBookingCommand command, CancellationToken cancellationToken)
@@ -16,8 +19,9 @@ public sealed class CancelBookingHandler(IBookingRepository bookings, IUnitOfWor
         if (booking is null)
             return BookingErrors.NotFound;
 
-        // R8: the transition and the 409 for a second cancel live in Booking.Cancel.
-        var result = booking.Cancel();
+        // R8 (409 for a second cancel) and R11 (409 if it starts in less than 60 minutes)
+        // live in Booking.Cancel. "Now" comes from TimeProvider.
+        var result = booking.Cancel(time.GetUtcNow().UtcDateTime);
         if (result.IsFailure)
             return result.Error;
 

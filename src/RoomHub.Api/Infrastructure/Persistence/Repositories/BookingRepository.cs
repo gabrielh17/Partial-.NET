@@ -15,6 +15,14 @@ public sealed class BookingRepository(RoomHubDbContext db) : IBookingRepository
             .Where(b => b.RoomId == roomId && b.Status == BookingStatus.Active)
             .ToListAsync(cancellationToken);
 
+    public async Task<IReadOnlyList<Booking>> ListActiveForBookedByAsync(
+        string bookedBy, DateTime fromUtc, CancellationToken cancellationToken) =>
+        await db.Bookings
+            .Where(b => b.BookedBy == bookedBy &&
+                        b.Status == BookingStatus.Active &&
+                        b.Range.StartUtc >= fromUtc)
+            .ToListAsync(cancellationToken);
+
     // Only marks. No SQL runs until IUnitOfWork.SaveChangesAsync.
     public void Add(Booking booking) => db.Bookings.Add(booking);
 }

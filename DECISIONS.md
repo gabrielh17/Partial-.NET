@@ -32,4 +32,4 @@ _(your answer here)_
 ## 6. If you had 30 more minutes
 What would you improve and what risk did you leave in the project?
 
-_(your answer here)_
+_better time management, creating skills_

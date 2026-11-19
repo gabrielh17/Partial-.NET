@@ -41,6 +41,9 @@ public sealed class BookingConfiguration : IEntityTypeConfiguration<Booking>
         // The overlap check (R7) looks up the active bookings of one room.
         builder.HasIndex(b => new { b.RoomId, b.Status });
 
+        // The daily limit (R9) looks up the active bookings of one participant.
+        builder.HasIndex(b => new { b.BookedBy, b.Status });
+
         // Computed from Status, not stored.
         builder.Ignore(b => b.IsActive);
     }
