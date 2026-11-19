@@ -12,12 +12,12 @@ _R1 was in Services/RoomService.cs, now it is in Features/Rooms/CreateRoom/Creat
 ## 2. Result instead of an exception
 Why is `Result` a better choice than an exception for "the room is occupied"? What happens in your code when an `Error` is returned?
 
-_(your answer here)_
+_exceptions are made for things that shouldn't happen, result is for business failures (they are not a crash)_
 
 ## 3. Who knows about EF Core?
 Which classes in your project know about EF Core and which do not? What do you gain and what do you pay with Repository + Unit of Work?
 
-_(your answer here)_
+_everything from infrastructure_
 
 ## 4. The flow of a request
 Draw in text (ASCII arrows) the path of a `POST /api/rooms/{roomId}/bookings` request through your project, with the **real** names of files and classes, from the endpoint to the database.
