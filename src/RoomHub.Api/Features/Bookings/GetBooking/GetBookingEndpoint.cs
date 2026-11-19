@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using RoomHub.Api.Common;
 using RoomHub.Api.Domain.Bookings;
-using RoomHub.Api.Infrastructure.Persistence;
+using RoomHub.Api.Infrastructure;
 
 namespace RoomHub.Api.Features.Bookings.GetBooking;
 

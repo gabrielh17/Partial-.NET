@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RoomHub.Api.Domain.Bookings;
 using RoomHub.Api.Domain.Rooms;
 
-namespace RoomHub.Api.Infrastructure.Persistence.Configurations;
+namespace RoomHub.Api.Infrastructure.Configurations;
 
 public sealed class BookingConfiguration : IEntityTypeConfiguration<Booking>
 {

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace RoomHub.Api.Infrastructure.Persistence;
+namespace RoomHub.Api.Infrastructure;
 
 public static class DatabaseInitializer
 {

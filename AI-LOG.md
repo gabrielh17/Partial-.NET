@@ -8,3 +8,4 @@ Write down, in order, what you asked the AI. It is not a punishment: a missing o
 |9:20|gave all the other tasks at once|---|---|
 |9:35|gave the R9 task|
 |9:40|R10 + R11|most|removed the indexes on the database (only for speed and that was not needed)|
+|9:55|asked Ai about the infrstructure + "Persistenece" naming convention|---|restructured|

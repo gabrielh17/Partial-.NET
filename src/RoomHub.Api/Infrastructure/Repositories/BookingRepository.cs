@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RoomHub.Api.Domain.Bookings;
 
-namespace RoomHub.Api.Infrastructure.Persistence.Repositories;
+namespace RoomHub.Api.Infrastructure.Repositories;
 
 public sealed class BookingRepository(RoomHubDbContext db) : IBookingRepository
 {

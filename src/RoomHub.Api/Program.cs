@@ -6,8 +6,8 @@ using RoomHub.Api.Domain.Common;
 using RoomHub.Api.Domain.Rooms;
 using RoomHub.Api.Features.Bookings;
 using RoomHub.Api.Features.Rooms;
-using RoomHub.Api.Infrastructure.Persistence;
-using RoomHub.Api.Infrastructure.Persistence.Repositories;
+using RoomHub.Api.Infrastructure;
+using RoomHub.Api.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -3,7 +3,7 @@ using RoomHub.Api.Domain.Bookings;
 using RoomHub.Api.Domain.Common;
 using RoomHub.Api.Domain.Rooms;
 
-namespace RoomHub.Api.Infrastructure.Persistence;
+namespace RoomHub.Api.Infrastructure;
 
 // The DbContext is already a unit of work: it implements IUnitOfWork
 // (DbContext.SaveChangesAsync matches the interface), so there is no separate class.

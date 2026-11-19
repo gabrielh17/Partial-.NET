@@ -27,7 +27,7 @@ _(your answer here)_
 ## 5. What you rejected from what the AI gave you
 Give a concrete example of code or an idea proposed by the AI that you corrected or rejected, and say why.
 
-_(your answer here)_
+_AI gave me speed suggestions which were not needed for this project_
 
 ## 6. If you had 30 more minutes
 What would you improve and what risk did you leave in the project?
