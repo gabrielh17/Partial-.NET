@@ -7,7 +7,7 @@ An unanswered question gives 0 points.
 ## 1. A rule you moved
 Pick one business rule (R1–R8). In which file did it live in the starter and in which file does it live now? Why there?
 
-_(your answer here)_
+_R1 was in Services/RoomService.cs, now it is in Features/Rooms/CreateRoom/CreateRoomEndpoint.cs_
 
 ## 2. Result instead of an exception
 Why is `Result` a better choice than an exception for "the room is occupied"? What happens in your code when an `Error` is returned?

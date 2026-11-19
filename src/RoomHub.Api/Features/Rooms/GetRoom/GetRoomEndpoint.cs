@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using RoomHub.Api.Common;
-using RoomHub.Api.Infrastructure;
+using RoomHub.Api.Domain.Rooms;
+using RoomHub.Api.Infrastructure.Persistence;
 
 namespace RoomHub.Api.Features.Rooms.GetRoom;
 
@@ -14,11 +16,21 @@ public static class GetRoomEndpoint
         group.MapGet("/{id:guid}", Handle)
             .WithName("GetRoom");
 
-    private static Ok<Response> Handle(Guid id, RoomRepository rooms)
+    // Read side: DbContext directly with a projection; the repository is for commands.
+    private static async Task<Results<Ok<Response>, ProblemHttpResult>> Handle(
+        Guid id,
+        RoomHubDbContext db,
+        CancellationToken ct)
     {
-        var room = rooms.Get(id)
-                   ?? throw new BusinessException("RoomNotFound", "The room does not exist.", 404);
+        var room = await db.Rooms
+            .AsNoTracking()
+            .Where(r => r.Id == id)
+            .Select(r => new Response(r.Id, r.Name, r.Capacity))
+            .FirstOrDefaultAsync(ct);
 
-        return TypedResults.Ok(new Response(room.Id, room.Name, room.Capacity));
+        if (room is null)
+            return RoomErrors.NotFound.ToProblem();
+
+        return TypedResults.Ok(room);
     }
 }

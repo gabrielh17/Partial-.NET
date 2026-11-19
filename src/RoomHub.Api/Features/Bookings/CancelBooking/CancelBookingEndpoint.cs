@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using RoomHub.Api.Common;
-using RoomHub.Api.Domain.Bookings;
-using RoomHub.Api.Infrastructure;
+using RoomHub.Api.Common.Cqrs;
+using RoomHub.Api.Domain.Common;
 
 namespace RoomHub.Api.Features.Bookings.CancelBooking;
 
@@ -11,18 +11,16 @@ public static class CancelBookingEndpoint
         group.MapPost("/{id:guid}/cancel", Handle)
             .WithName("CancelBooking");
 
-    private static NoContent Handle(Guid id, BookingRepository bookings)
+    // Thin: request -> command -> handler -> HTTP response.
+    private static async Task<Results<NoContent, ProblemHttpResult>> Handle(
+        Guid id,
+        ICommandHandler<CancelBookingCommand, Unit> handler,
+        CancellationToken ct)
     {
-        // R8: a missing booking gives 404.
-        var booking = bookings.Get(id)
-                      ?? throw new BusinessException("BookingNotFound", "The booking does not exist.", 404);
+        var result = await handler.Handle(new CancelBookingCommand(id), ct);
 
-        // R8: cancelling an already cancelled booking gives 409.
-        if (booking.Status == BookingStatus.Cancelled)
-            throw new BusinessException("BookingAlreadyCancelled", "The booking is already cancelled.", 409);
-
-        // R8: Active -> Cancelled. CreateBooking ignores cancelled bookings, so the interval is freed.
-        booking.Status = BookingStatus.Cancelled;
+        if (result.IsFailure)
+            return result.Error.ToProblem();
 
         return TypedResults.NoContent();
     }

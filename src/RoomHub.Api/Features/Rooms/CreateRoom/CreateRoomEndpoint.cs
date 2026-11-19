@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using RoomHub.Api.Common;
+using RoomHub.Api.Common.Cqrs;
 using RoomHub.Api.Domain.Rooms;
-using RoomHub.Api.Infrastructure;
 
 namespace RoomHub.Api.Features.Rooms.CreateRoom;
 
@@ -15,25 +15,18 @@ public static class CreateRoomEndpoint
         group.MapPost("/", Handle)
             .WithName("CreateRoom");
 
-    private static Created<Response> Handle(Request request, RoomRepository rooms)
+    // Thin: request -> command -> handler -> HTTP response.
+    private static async Task<Results<Created<Response>, ProblemHttpResult>> Handle(
+        Request request,
+        ICommandHandler<CreateRoomCommand, Room> handler,
+        CancellationToken ct)
     {
-        // R1: non-empty name.
-        if (string.IsNullOrWhiteSpace(request.Name))
-            throw new BusinessException("InvalidName", "Room name is required.", 400);
+        var result = await handler.Handle(new CreateRoomCommand(request.Name, request.Capacity), ct);
 
-        // R1: strictly positive capacity.
-        if (request.Capacity <= 0)
-            throw new BusinessException("InvalidCapacity", "Capacity must be positive.", 400);
+        if (result.IsFailure)
+            return result.Error.ToProblem();
 
-        var room = new Room
-        {
-            Id = Guid.NewGuid(),
-            Name = request.Name.Trim(),
-            Capacity = request.Capacity
-        };
-
-        rooms.Add(room);
-
+        var room = result.Value;
         return TypedResults.Created(
             $"/api/rooms/{room.Id}",
             new Response(room.Id, room.Name, room.Capacity));

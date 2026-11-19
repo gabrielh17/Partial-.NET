@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using RoomHub.Api.Common;
-using RoomHub.Api.Infrastructure;
+using RoomHub.Api.Domain.Bookings;
+using RoomHub.Api.Infrastructure.Persistence;
 
 namespace RoomHub.Api.Features.Bookings.GetBooking;
 
@@ -13,18 +15,28 @@ public static class GetBookingEndpoint
         DateTime StartUtc,
         DateTime EndUtc,
         int Attendees,
-        string Status);
+        BookingStatus Status);
 
     public static void Map(RouteGroupBuilder group) =>
         group.MapGet("/{id:guid}", Handle)
             .WithName("GetBooking");
 
-    private static Ok<Response> Handle(Guid id, BookingRepository bookings)
+    // Read side: DbContext directly with a projection; the repository is for commands.
+    private static async Task<Results<Ok<Response>, ProblemHttpResult>> Handle(
+        Guid id,
+        RoomHubDbContext db,
+        CancellationToken ct)
     {
-        var b = bookings.Get(id)
-                ?? throw new BusinessException("BookingNotFound", "The booking does not exist.", 404);
+        var booking = await db.Bookings
+            .AsNoTracking()
+            .Where(b => b.Id == id)
+            .Select(b => new Response(
+                b.Id, b.RoomId, b.BookedBy, b.Range.StartUtc, b.Range.EndUtc, b.Attendees, b.Status))
+            .FirstOrDefaultAsync(ct);
 
-        return TypedResults.Ok(new Response(
-            b.Id, b.RoomId, b.BookedBy, b.StartUtc, b.EndUtc, b.Attendees, b.Status.ToString()));
+        if (booking is null)
+            return BookingErrors.NotFound.ToProblem();
+
+        return TypedResults.Ok(booking);
     }
 }
