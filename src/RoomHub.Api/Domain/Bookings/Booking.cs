@@ -1,4 +1,4 @@
-namespace RoomHub.Api.Models;
+namespace RoomHub.Api.Domain.Bookings;
 
 public enum BookingStatus
 {
